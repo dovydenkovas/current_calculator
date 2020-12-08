@@ -34,6 +34,7 @@ result_om calculate_om(input_data in){
     //int recount(I1,I2,I3):
     //return [I1,abs(I2),abs(I3)] if I1 < 0 else [I1,-abs(I2),-abs(I3)]
 
+    // Первый этап
     res.R101 = in.R1 + in.R01;
     res.R202 = in.R2 + in.R02;
     res.R303 = in.R3 + in.R03;
@@ -46,8 +47,9 @@ result_om calculate_om(input_data in){
     res.I12 = res.I11<=0 ? std::abs(res.I12) : -std::abs(res.I12);
     res.I13 = res.I11<=0 ? std::abs(res.I13) : -std::abs(res.I13);
 
+    // Второй этап
     res.R2o = unfull_round(res.R101 * res.R303 / (res.R101 + res.R303));
-    res.R2e = res.R1o+res.R202;
+    res.R2e = res.R2o+res.R202;
     res.I22 = unfull_round(in.E2 / res.R2e);
     res.U2 = unfull_round(res.I22 * res.R2o);
     res.I21 = unfull_round(res.U2 / res.R101);
@@ -55,7 +57,7 @@ result_om calculate_om(input_data in){
     res.I21 = res.I22<=0 ? std::abs(res.I21) : -std::abs(res.I21);
     res.I23 = res.I22<=0 ? std::abs(res.I23) : -std::abs(res.I23);
 
-
+    // Третий этап
     res.R3o = unfull_round(res.R202 * res.R101 / (res.R202 + res.R101));
     res.R3e = res.R3o + res.R303;
     res.I33 = unfull_round(in.E3 / res.R3e);

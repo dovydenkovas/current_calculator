@@ -63,7 +63,7 @@ MainWindow::MainWindow(): QMainWindow() // конструктор
     input_frame->setMaximumSize(250, 2000);
 
     connect(calculate_current_btn, SIGNAL (released()), this, SLOT (calculate_current()));
-    output_om->setText("Чтобы появилось решение, введите входные данные и нажмите \"Найти токи\" ");
+    output_om->setHtml("Чтобы появилось решение, введите входные данные и нажмите \"Найти токи\" ");
 
     input_emf1->setRange(-10000, 10000);
     input_emf2->setRange(-10000, 10000);
@@ -92,90 +92,148 @@ void MainWindow::calculate_current() {
     input_data.R2 = input_branch_resistance2->value();
     input_data.R3 = input_branch_resistance3->value();
 
+    std::string head =  "<html><head>\n"
+                        "<script type=\"text/javascript\" src=\"https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML\">\n"
+                        "</script></head>\n"
+                        "<body>\n"
+                        "<p><mathjax style=\"font-size:20px; float:left; width=0;\">";
+
+    std::string end = "</mathjax></p>\n"
+                      "</body></html>";
+
     // Метод наложения
     result_om res_om = calculate_om(input_data);
-    std::string out_om = "Первый Этап:\n"
-                         "R2=" + std::to_string(res_om.R202) + "  \tI1=" + std::to_string(res_om.I11) + "\n"
-                         "R3=" + std::to_string(res_om.R303) + "  \tU=" + std::to_string(res_om.U1) + "\n"
-                         "R23=" + std::to_string(res_om.R1o) + "\tI2=" + std::to_string(res_om.I12) + "\n"
-                         "Rэ=" + std::to_string(res_om.R1e) + "  \tI3=" + std::to_string(res_om.I13) + "\n"
-                         "\nВторой Этап:\n"
-                         "R1=" + std::to_string(res_om.R101) + "  \tI2=" + std::to_string(res_om.I22) + "\n"
-                         "R3=" + std::to_string(res_om.R303) + "  \tU=" + std::to_string(res_om.U2) + "\n"
-                         "R13=" + std::to_string(res_om.R2o) + "  \tI1=" + std::to_string(res_om.I21) + "\n"
-                         "Rэ=" + std::to_string(res_om.R2e) + "  \tI3=" + std::to_string(res_om.I23) + "\n"
-                         "\nТретий Этап:\n"
-                         "R2=" + std::to_string(res_om.R202) + "  \tI3=" + std::to_string(res_om.I33) + "\n"
-                         "R1=" + std::to_string(res_om.R101) + "  \tU=" + std::to_string(res_om.U3) + "\n"
-                         "R12=" + std::to_string(res_om.R3o) + "  \tI2=" + std::to_string(res_om.I32) + "\n"
-                         "Rэ=" + std::to_string(res_om.R3e) + "  \tI1=" + std::to_string(res_om.I31) + "\n"
-                         "\nИтого:\n"
-                         "I1=" + std::to_string(res_om.I1) + "\tI2=" + std::to_string(res_om.I2) + "\tI3=" + std::to_string(res_om.I3) + "\n"
-                         "sum: " + std::to_string(unfull_round(res_om.I1 + res_om.I2 + res_om.I3, 4));
-    output_om->setText(QString::fromStdString(out_om));
+    std::stringstream stream_om;
+    stream_om << std::fixed << std::setprecision(2) << head
+        << "$$ Первый Этап: $$"
+        << "$$ R_2=" << res_om.R202 << " $$"
+        << "$$ R_3=" << res_om.R303 << " $$"
+        << "$$ R_{23}=" << res_om.R1o << " $$"
+        << "$$ R_э=" << res_om.R1e << " $$"
+        << "$$ I_1=" << res_om.I11 << " $$"
+        << "$$ U=" << res_om.U1 << " $$"
+        << "$$ I_2=" << res_om.I12 << " $$"
+        << "$$ I_3=" << res_om.I13 << " $$<br>"
+        << "$$ Второй Этап: $$"
+        << "$$ R_1=" << res_om.R101 << " $$"
+        << "$$ R_3=" << res_om.R303 << " $$"
+        << "$$ R_{13}=" << res_om.R2o << " $$"
+        << "$$ R_э=" << res_om.R2e << " $$"
+        << "$$ I_2=" << res_om.I22 << " $$"
+        << "$$ U=" << res_om.U2 << " $$"
+        << "$$ I_1=" << res_om.I21 << " $$"
+        << "$$ I_3=" << res_om.I23 << " $$<br>"
+        << "$$ Третий Этап: $$"
+        << "$$ R_1=" << res_om.R101 << " $$"
+        << "$$ R_2=" << res_om.R202 << " $$"
+        << "$$ R_{12}=" << res_om.R3o << " $$"
+        << "$$ R_э= " << res_om.R3e << " $$"
+        << "$$ I_3= " << res_om.I33 << " $$"
+        << "$$ U= " << res_om.U3 << " $$"
+        << "$$ I_1= " << res_om.I31 << " $$"
+        << "$$ I_2= " << res_om.I32 << " $$<br>"
+        << "$$ Итого: $$"
+        << "$$ I_1= " << res_om.I1 << " $$"
+        << "$$ I_2= " << res_om.I2 << " $$"
+        << "$$ I_3= " << res_om.I3 << " $$"
+        << "$$ sum: " << unfull_round(res_om.I1 + res_om.I2 + res_om.I3, 4) << " $$" << end;
+    std::string out_om = stream_om.str();
+    output_om->setHtml(QString::fromStdString(out_om));
 
     // Метод узлового напряжения
     result_nem res_nem = calculate_nem(input_data);
-    std::string out_nem = "g1="+std::to_string(res_nem.g1)+
-                        "\tg2="+std::to_string(res_nem.g2)+
-                        "\tg3="+std::to_string(res_nem.g3)+
-                        "\nU="+std::to_string(res_nem.U)+
-                        "\nI1="+std::to_string(res_nem.I1)+
-                        "\tI2="+std::to_string(res_nem.I2)+
-                        "\tI3"+std::to_string(res_nem.I3)+
-                        "\nsum: "+std::to_string(res_nem.I1 + res_nem.I2 + res_nem.I3);
-    output_nem->setText(QString::fromStdString(out_nem));
+    std::stringstream stream_nem;
+    stream_nem << std::fixed << std::setprecision(3) << head
+               << "$$ g_1= " << res_nem.g1 << " $$"
+               << "$$ g_2= " << res_nem.g2 << " $$"
+               << "$$ g_3= " << res_nem.g3 << " $$<br>"
+               << "$$ U= "  << res_nem.U << " $$<br>"
+               << "$$ I_1= " << res_nem.I1 << " $$"
+               << "$$ I_2= " << res_nem.I2 << " $$"
+               << "$$ I_3= " << res_nem.I3 << " $$"
+               << "$$ sum: " << res_nem.I1 + res_nem.I2 + res_nem.I3 << " $$" << end;
+
+    std::string out_nem = stream_nem.str();
+    output_nem->setHtml(QString::fromStdString(out_nem));
 
     // Метод Узловых и контурных уравнений
     result_mnce res_mnce = calculate_mnce(input_data);
+    std::stringstream stream_mnce;
+    stream_mnce << std::fixed << std::setprecision(3) << head
+                << "\\begin{cases}"
+                << "I_1 + I_2 + I_3 = 0\\\\"
+                << input_data.E1 - input_data.E2 << " = " << res_mnce.R101 << "·I_1 -"  << res_mnce.R202 << "·I_2\\\\"
+                << input_data.E2 - input_data.E3 << " = " << res_mnce.R202 << "·I_2 -" << res_mnce.R303 << "·I_3\\\\"
+                << "\\end{cases}"
 
-    std::string out_mnce = "{ I1 + I2 + I3 = 0\n"
-                           "{ "+ std::to_string(input_data.E1 - input_data.E2) + " = " + std::to_string(res_mnce.R101) + "·I1 -" + std::to_string(res_mnce.R202) + "·I2\n"
-                           "{ " + std::to_string(input_data.E2 - input_data.E3) + " = " + std::to_string(res_mnce.R202) + "·I2 -" + std::to_string(res_mnce.R303) + "·I3\n\n"
+                << "\\begin{cases}"
+                << "I_1 = - I_2 - I_3\\\\"
+                << input_data.E1 - input_data.E2 << " = -" << res_mnce.R101 << "·I_2 -" << res_mnce.R101 << "·I_3 -" << res_mnce.R202 << "·I_2\\\\"
+                << input_data.E2 - input_data.E3 << " = " << res_mnce.R202 << "·I_2 -" << res_mnce.R303 << "·I_3"
+                << "\\end{cases}"
 
-                           "{ I1 = - I2 - I3\n"
-                           "{ " + std::to_string(input_data.E1 - input_data.E2) + " = -" + std::to_string(res_mnce.R101) + "·I2 -" + std::to_string(res_mnce.R101) + "·I3 -" + std::to_string(res_mnce.R202) + "·I2\n"
-                           "{ " + std::to_string(input_data.E2 - input_data.E3) + " = " + std::to_string(res_mnce.R202) + "·I2 -" + std::to_string(res_mnce.R303) + "·I3\n\n"
+                << "\\begin{cases}"
+                << "I_1 = - I_2 - I_3\\\\"
+                << input_data.E1 - input_data.E2 << " = -" << res_mnce.R101 + res_mnce.R202 << "·I_2 -" << res_mnce.R101 << "·I_3 | ·" << res_mnce.R303 << "\\\\"
+                << input_data.E2 - input_data.E3 << " = " << res_mnce.R202 << "·I_2 -" << res_mnce.R303 << "·I_3 | ·" << res_mnce.R101
+                << "\\end{cases}"
 
-                           "{ I1 = - I2 - I3\n"
-                           "{ " + std::to_string(input_data.E1 - input_data.E2) + " = -" + std::to_string(res_mnce.R101 + res_mnce.R202) + "·I2 -" + std::to_string(res_mnce.R101) + "·I3 | ·" + std::to_string(res_mnce.R303) + "\n"
-                           "{ " + std::to_string(input_data.E2 - input_data.E3) + " = " + std::to_string(res_mnce.R202) + "·I2 -" + std::to_string(res_mnce.R303) + "·I3 | ·" + std::to_string(res_mnce.R101) + "\n"
+                << "\\begin{cases}"
+                << (input_data.E1 - input_data.E2) * res_mnce.R303 << " = -" << (res_mnce.R101 + res_mnce.R202) * res_mnce.R303 << "·I_2 -" << res_mnce.R101 * res_mnce.R303 << "·I_3\\\\"
+                << (input_data.E2 - input_data.E3) * res_mnce.R101 << " = " << res_mnce.R202 * res_mnce.R101 << "·I_2 -" << res_mnce.R303 * res_mnce.R101 << "·I_3\\\\"
+                << "\\end{cases}"
+                << "$$  ――――――――――――――― $$"
+                << "$$" << res_mnce.R303 * (input_data.E1 - input_data.E2) - res_mnce.R101 * (input_data.E2 - input_data.E3) << " = " << -(res_mnce.R101 + res_mnce.R202) * res_mnce.R303 + res_mnce.R202 * res_mnce.R101 << "·I_2 $$"
 
-                           "-{ " + std::to_string((input_data.E1 - input_data.E2) * res_mnce.R303) + " = -" + std::to_string((res_mnce.R101 + res_mnce.R202) * res_mnce.R303) + "·I2 -" + std::to_string(res_mnce.R101 * res_mnce.R303) + "·I3\n"
-                           " { " + std::to_string((input_data.E2 - input_data.E3) * res_mnce.R101) + " = " + std::to_string(res_mnce.R202 * res_mnce.R101) + "·I2 -" + std::to_string(res_mnce.R303 * res_mnce.R101) + "·I3\n"
-                           " ―――――――――――――――――――――\n"
-                           "  " + std::to_string(res_mnce.R303 * (input_data.E1 - input_data.E2) - res_mnce.R101 * (input_data.E2 - input_data.E3)) + " = " + std::to_string(-(res_mnce.R101 + res_mnce.R202) * res_mnce.R303 + res_mnce.R202 * res_mnce.R101) + "·I2\n\n"
+                << "\\begin{cases}"
+                << "I_3 = " << "\\frac{" << -(res_mnce.R303 * (input_data.E1 - input_data.E2) - res_mnce.R101 * (input_data.E2 - input_data.E3)) << "}{" << (res_mnce.R101 + res_mnce.R202) * res_mnce.R303 + res_mnce.R202 * res_mnce.R101 << "}\\\\"
+                << "I_2 = " << "\\frac{" << -(input_data.E2 - input_data.E3 - res_mnce.I2 * res_mnce.R202) << "}{" << res_mnce.R303 << "}\\\\"
+                << "I_1 = " <<  res_mnce.I2 << " - " << res_mnce.I3
+                << "\\end{cases}"
 
-                           "{ I2 = " + std::to_string(-(res_mnce.R303 * (input_data.E1 - input_data.E2) - res_mnce.R101 * (input_data.E2 - input_data.E3))) + " / " + std::to_string((res_mnce.R101 + res_mnce.R202) * res_mnce.R303 + res_mnce.R202 * res_mnce.R101) + "\n"
-                           "{ I3 = " + std::to_string(-(input_data.E2 - input_data.E3 - res_mnce.I2 * res_mnce.R202)) + " / " + std::to_string(res_mnce.R303) + "\n"
-                           "{ I1 = " + std::to_string(res_mnce.I2) + " - " + std::to_string(res_mnce.I3) + "\n\n"
+                << "\\begin{cases}"
+                << "I_1 =" << res_mnce.I1 << "\\\\"
+                << "I_2 =" << res_mnce.I2 << "\\\\"
+                << "I_3 =" << res_mnce.I3
+                << "\\end{cases}"
+                << "$$ sum: " << unfull_round(res_mnce.I1 + res_mnce.I2 + res_mnce.I3, 4) << " $$"
+                << end;
 
-                           "I1=" + std::to_string(res_mnce.I1) + "\tI2=" + std::to_string(res_mnce.I2) + "\tI3=" + std::to_string(res_mnce.I3) + "\n"
-                           "sum: " + std::to_string(unfull_round(res_mnce.I1 + res_mnce.I2 + res_mnce.I3, 4)) + "\n";
-
-    output_mnce->setText(QString::fromStdString(out_mnce));
+    std::string out_mnce = stream_mnce.str();
+    output_mnce->setHtml(QString::fromStdString(out_mnce));
 
 
     // Метод контурных токов
     result_lcm res_lcm = calculate_lcm(input_data);
-    std::string out_lcm = "{ " + std::to_string(res_lcm.E1 + res_lcm.E2) + " = " + std::to_string(res_lcm.R1 + res_lcm.R2) +
-                          "·I11 + " + std::to_string(res_lcm.R2) + "·I22\n"
-                          "{ " + std::to_string(res_lcm.E2 + res_lcm.E3) +
-                          " = " + std::to_string(res_lcm.R2 + res_lcm.R3) + "·I22 + "+ std::to_string(res_lcm.R2) + "·I11\n\n"
-                          "{ " + std::to_string(res_lcm.E1 + res_lcm.E2) + " = " + std::to_string(res_lcm.R2) + "·I22 + " +
-                          std::to_string(res_lcm.R1 + res_lcm.R2) + "·I11  | ·" + std::to_string(res_lcm.R2 + res_lcm.R3) + "\n"
-                          "{ " + std::to_string(res_lcm.E2 + res_lcm.E3) + " = " + std::to_string(res_lcm.R2 + res_lcm.R3) +
-                          "·I22 + " + std::to_string(res_lcm.R2) + "·I11  | ·" + std::to_string(res_lcm.R2) + "\n\n"
-                          "-{ " + std::to_string((res_lcm.E1 + res_lcm.E2) * (res_lcm.R2 + res_lcm.R3)) +
-                          " = " + std::to_string(res_lcm.R2 * (res_lcm.R2 + res_lcm.R3)) +
-                          "·I22 + " + std::to_string((res_lcm.R1 + res_lcm.R2) * (res_lcm.R2 + res_lcm.R3)) + "·I11\n"
-                          " { " + std::to_string((res_lcm.E2 + res_lcm.E3) * res_lcm.R2) + " = " +
-                          std::to_string((res_lcm.R2 + res_lcm.R3) * res_lcm.R2) + "·I22 + " +
-                          std::to_string(res_lcm.R2 * res_lcm.R2) + "·I11\n"
-                          "―――――――――――――――――――――\n"
-                          "  " + std::to_string((res_lcm.E1 + res_lcm.E2) * (res_lcm.R2 + res_lcm.R3) - (res_lcm.E2 + res_lcm.E3) * res_lcm.R2) +
-                          " = " + std::to_string((res_lcm.R1 + res_lcm.R2) * (res_lcm.R2 + res_lcm.R3) - res_lcm.R2 * res_lcm.R2) + "·I1\n\n"
-                          "I1=" + std::to_string(res_lcm.I1) + "\tI2=" + std::to_string(res_lcm.I2) + "\tI3=" + std::to_string(res_lcm.I3) + "\n"
-                          "sum: " + std::to_string(unfull_round(res_lcm.I1 + res_lcm.I2 + res_lcm.I3, 4));
-    output_lcm->setText(QString::fromStdString(out_lcm));
+    std::stringstream stream_lcm;
+    stream_lcm  << std::fixed << std::setprecision(3) << head
+
+        << "\\begin{cases}"
+        << res_lcm.E1 + res_lcm.E2 << " = " <<res_lcm.R1 + res_lcm.R2 << "·I_{11} + " << res_lcm.R2 << "·I_{22}\\\\"
+        << res_lcm.E2 + res_lcm.E3 << " = " <<res_lcm.R2 + res_lcm.R3 << "·I_{22} + " << res_lcm.R2 << "·I_{11}"
+        << "\\end{cases}"
+
+        << "\\begin{cases}"
+        << res_lcm.E1 + res_lcm.E2 << " = " << res_lcm.R2 << "·I_{22} + " << res_lcm.R1 + res_lcm.R2 << "·I_{11}  | ·" <<res_lcm.R2 + res_lcm.R3 << "\\\\"
+        << res_lcm.E2 + res_lcm.E3 << " = " <<res_lcm.R2 + res_lcm.R3 << "·I_{22} + " << res_lcm.R2 << "·I_{11}  | ·" << res_lcm.R2
+        << "\\end{cases}"
+
+        << "\\begin{cases}"
+        << (res_lcm.E1 + res_lcm.E2) * (res_lcm.R2 + res_lcm.R3) << " = " <<res_lcm.R2 * (res_lcm.R2 + res_lcm.R3) <<
+            "·I_{22} + " << (res_lcm.R1 + res_lcm.R2) * (res_lcm.R2 + res_lcm.R3) << "·I_{11}\\\\"
+        << (res_lcm.E2 + res_lcm.E3) * res_lcm.R2 << " = " << (res_lcm.R2 + res_lcm.R3) * res_lcm.R2 << "·I_{22} + " << res_lcm.R2 * res_lcm.R2 << "·I_{11}"
+        << "\\end{cases}"
+        << "$$ ――――――――――――――――――――― $$"
+        << "$$ " << (res_lcm.E1 + res_lcm.E2) * (res_lcm.R2 + res_lcm.R3) - (res_lcm.E2 + res_lcm.E3) * res_lcm.R2 <<
+            " = " << (res_lcm.R1 + res_lcm.R2) * (res_lcm.R2 + res_lcm.R3) - res_lcm.R2 * res_lcm.R2 << "·I_{11} $$"
+
+        << "\\begin{cases}"
+        << "I_1 = " << res_lcm.I1 << "\\\\"
+        << "I_2 = " << res_lcm.I2 << "\\\\"
+        << "I_3=" << res_lcm.I3
+        << "\\end{cases}"
+        << "sum: " + std::to_string(unfull_round(res_lcm.I1 + res_lcm.I2 + res_lcm.I3, 4))
+        << end;
+    std::string out_lcm = stream_lcm.str();
+    output_lcm->setHtml(QString::fromStdString(out_lcm));
 }

@@ -3,6 +3,9 @@
 
 #include <iostream>
 #include <string>
+#include <sstream>
+#include <iomanip>
+
 #include <QMainWindow>
 #include <QtWidgets>
 #include <QPushButton>
@@ -13,6 +16,7 @@
 #include <QFrame>
 #include <QBoxLayout>
 #include <QString>
+#include <QtWebEngineWidgets/QWebEngineView>
 
 #include "caltulate_circuit.h"
 
@@ -36,10 +40,10 @@ private:
     QDoubleSpinBox *input_branch_resistance1 = new QDoubleSpinBox();
     QDoubleSpinBox *input_branch_resistance2 = new QDoubleSpinBox();
     QDoubleSpinBox *input_branch_resistance3 = new QDoubleSpinBox();
-    QTextBrowser *output_om = new QTextBrowser();
-    QTextBrowser *output_nem = new QTextBrowser();
-    QTextBrowser *output_mnce = new QTextBrowser();
-    QTextBrowser *output_lcm = new QTextBrowser();
+    QWebEngineView *output_om = new QWebEngineView();
+    QWebEngineView *output_nem = new QWebEngineView();
+    QWebEngineView *output_mnce = new QWebEngineView();
+    QWebEngineView *output_lcm = new QWebEngineView();
     QPushButton *calculate_current_btn = new QPushButton("Найти токи");
 };
 
