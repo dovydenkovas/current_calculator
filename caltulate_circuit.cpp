@@ -1,7 +1,3 @@
-//
-// Created by death on 04.12.2020.
-//
-
 #include <cmath>
 
 #include "caltulate_circuit.h"

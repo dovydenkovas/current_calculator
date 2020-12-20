@@ -26,6 +26,7 @@ class  MainWindow:public QMainWindow {
 Q_OBJECT
 public:
     MainWindow();
+    void keyPressEvent(QKeyEvent *event);
 
 private slots:
     void calculate_current();
