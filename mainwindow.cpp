@@ -1,4 +1,4 @@
-#include "MainWindow.h"
+#include "mainwindow.h"
 
 MainWindow::MainWindow(): QMainWindow() // конструктор
 {
@@ -79,7 +79,6 @@ MainWindow::MainWindow(): QMainWindow() // конструктор
 };
 
 void MainWindow::calculate_current() {
-
     // Получение входных значений:
     input_data input_data;
     input_data.E1 = input_emf1->value();
