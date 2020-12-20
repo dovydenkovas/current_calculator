@@ -25,7 +25,21 @@ set(PROJECT_SOURCES
 )
 
 
+macro(copy_directory _src _dst)
+    execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${_src} ${_dst}
+        RESULT_VARIABLE _res
+        OUTPUT_VARIABLE _out
+        ERROR_VARIABLE  _err
+    )
+    if(_err)
+        message(FATAL_ERROR "ERROR ---> could not be copied: ${_err}")
+    endif()
+endmacro()
+copy_directory(${PROJECT_SOURCE_DIR}/images ${PROJECT_BINARY_DIR}/images)
+
 add_executable(current_calculator  ${PROJECT_SOURCES})
 target_link_libraries(current_calculator PRIVATE Qt5::Widgets Qt5::WebEngineWidgets)
+
+
 
 
