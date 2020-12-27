@@ -22,11 +22,9 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         caltulate_circuit.h
         caltulate_circuit.cpp
+        resources.rc
 )
 
-if (WIN32)
-    configure_file(myresource.rc)
-endif()
 
 macro(copy_directory _src _dst)
     execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${_src} ${_dst}
@@ -40,7 +38,7 @@ macro(copy_directory _src _dst)
 endmacro()
 copy_directory(${PROJECT_SOURCE_DIR}/images ${PROJECT_BINARY_DIR}/images)
 
-add_executable(current_calculator  ${PROJECT_SOURCES})
+add_executable(current_calculator WIN32 ${PROJECT_SOURCES})
 target_link_libraries(current_calculator PRIVATE Qt5::Widgets Qt5::WebEngineWidgets)
 
 
