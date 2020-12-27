@@ -24,6 +24,9 @@ set(PROJECT_SOURCES
         caltulate_circuit.cpp
 )
 
+if (WIN32)
+    configure_file(myresource.rc)
+endif()
 
 macro(copy_directory _src _dst)
     execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${_src} ${_dst}
