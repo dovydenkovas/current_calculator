@@ -18,6 +18,7 @@
 #include <QString>
 #include <QtWebEngineWidgets/QWebEngineView>
 
+
 #include "caltulate_circuit.h"
 
 
@@ -25,6 +26,7 @@ class  MainWindow:public QMainWindow {
 Q_OBJECT
 public:
     MainWindow();
+    void keyPressEvent(QKeyEvent *event);
 
 private slots:
     void calculate_current();
@@ -40,7 +42,7 @@ private:
     QDoubleSpinBox *input_branch_resistance1 = new QDoubleSpinBox();
     QDoubleSpinBox *input_branch_resistance2 = new QDoubleSpinBox();
     QDoubleSpinBox *input_branch_resistance3 = new QDoubleSpinBox();
-    QWebEngineView *output_om = new QWebEngineView();
+    QWebEngineView *output_om = new QWebEngineView(); // QWebEngineView
     QWebEngineView *output_nem = new QWebEngineView();
     QWebEngineView *output_mnce = new QWebEngineView();
     QWebEngineView *output_lcm = new QWebEngineView();

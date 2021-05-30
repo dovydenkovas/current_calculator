@@ -1,7 +1,3 @@
-//
-// Created by death on 04.12.2020.
-//
-
 #ifndef CALCULATOR_CIRCUIT_CALTULATE_CIRCUIT_H
 #define CALCULATOR_CIRCUIT_CALTULATE_CIRCUIT_H
 #include <iostream>
