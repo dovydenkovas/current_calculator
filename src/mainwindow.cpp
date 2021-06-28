@@ -1,7 +1,6 @@
 #include "mainwindow.h"
 
-MainWindow::MainWindow(): QMainWindow() // конструктор
-{
+MainWindow::MainWindow(): QMainWindow() {
     this->setWindowTitle("Нахождение токов цепи");
     this->resize(840, 600);
 
