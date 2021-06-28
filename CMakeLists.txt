@@ -17,12 +17,12 @@ find_package(QT NAMES Qt5 COMPONENTS Widgets Core Gui WebEngineWidgets REQUIRED)
 find_package(Qt5 COMPONENTS Widgets WebEngineWidgets REQUIRED)
 
 set(PROJECT_SOURCES
-        main.cpp
-        mainwindow.h
-        mainwindow.cpp
-        caltulate_circuit.h
-        caltulate_circuit.cpp
-        resources.rc
+        src/main.cpp
+        src/mainwindow.h
+        src/mainwindow.cpp
+        src/caltulate_circuit.h
+        src/caltulate_circuit.cpp
+        src/resources.rc
 )
 
 
@@ -40,7 +40,3 @@ copy_directory(${PROJECT_SOURCE_DIR}/images ${PROJECT_BINARY_DIR}/images)
 
 add_executable(current_calculator WIN32 ${PROJECT_SOURCES})
 target_link_libraries(current_calculator PRIVATE Qt5::Widgets Qt5::WebEngineWidgets)
-
-
-
-

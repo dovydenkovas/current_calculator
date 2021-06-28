@@ -1,15 +1,15 @@
 #include <cmath>
-
 #include "caltulate_circuit.h"
 
-double unfull_round(double a, int n=3){
+
+double unfull_round(double a, int n=3) {
     int power = std::pow(10, n);
     double result = std::round(a * power) / power;
     return result;
 }
 
 
-result_nem calculate_nem(input_data in){
+result_nem calculate_nem(input_data in) {
     /* Расчитывает токи методом узлового напряжения */
     result_nem res;
     res.g1 = 1/(in.R01 + in.R1);
@@ -23,7 +23,7 @@ result_nem calculate_nem(input_data in){
 }
 
 
-result_om calculate_om(input_data in){
+result_om calculate_om(input_data in) {
     /* Расчитывает токи методом наложения */
     result_om res;
 
@@ -72,7 +72,7 @@ result_om calculate_om(input_data in){
 
 
 
-result_mnce calculate_mnce(input_data in){
+result_mnce calculate_mnce(input_data in) {
     /* Расчитывает токи методом узловых и контурных уравнений */
     result_mnce res;
 
@@ -89,7 +89,7 @@ result_mnce calculate_mnce(input_data in){
 
 
 
-result_lcm calculate_lcm(input_data in){
+result_lcm calculate_lcm(input_data in) {
     /* Расчитывает токи методом контурных токов */
     result_lcm res;
 
@@ -110,6 +110,3 @@ result_lcm calculate_lcm(input_data in){
 
     return res;
 };
-
-
-
